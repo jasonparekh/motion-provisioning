@@ -257,20 +257,20 @@ module MotionProvisioning
     def sha1_fingerprint(path)
       result = `openssl x509 -in "#{path}" -inform der -noout -sha1 -fingerprint`
       begin
-        result = result.match(/SHA1 Fingerprint=(.*)/)[1]
+        result = result.match(/SHA1 Fingerprint=(.*)/i)[1]
         result.delete!(':')
         return result
       rescue
-        Utils.log("Error", "Error parsing certificate '#{path}'")
+        Utils.log("Error", "Error parsing SHA1 from certificate '#{path}'")
       end
     end
 
     def common_name(path)
       result = `openssl x509 -in "#{path}" -inform der -noout -sha1 -subject`
       begin
-        return result.match(/\/CN=(.*?)\//)[1]
+        return result.match(/(?:\/CN=|CN = )(.*?)(?:\/|, |$)/)[1]
       rescue
-        Utils.log("Error", "Error parsing certificate '#{path}'")
+        Utils.log("Error", "Error parsing CN from certificate '#{path}'")
       end
     end
 
